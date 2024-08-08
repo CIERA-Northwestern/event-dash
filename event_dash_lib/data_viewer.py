@@ -3,7 +3,9 @@
 import copy
 import re
 import types
+
 from typing import Tuple
+
 
 import numpy as np
 import pandas as pd
@@ -139,10 +141,11 @@ class DataViewer:
 
         # Set defaults
         xs = df.index
+
         if categories is None:
             categories = df.columns
         if category_colors is None:
-            color_palette = sns.color_palette(n_colors=len(categories))
+            color_palette = sns.color_palette()
             category_colors = { key: color_palette[i] for i, key in enumerate(categories) }
 
         sns.set(font=font, style=seaborn_style)
@@ -322,7 +325,7 @@ class DataViewer:
         if categories is None:
             categories = df.columns
         if category_colors is None:
-            color_palette = sns.color_palette(n_colors=len(categories))
+            color_palette = sns.color_palette()
             category_colors = { key: color_palette[i] for i, key in enumerate(categories) }
 
         # Get data

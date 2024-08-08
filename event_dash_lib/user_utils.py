@@ -7,7 +7,7 @@ import glob
 import numpy as np
 import pandas as pd
 
-from press_dash_lib import utils
+from event_dash_lib import utils
 
 
 def load_data(config):
@@ -160,15 +160,18 @@ def preprocess_data(cleaned_df, config):
     preprocessed_df = cleaned_df.copy()
 
     # Get the year, according to the config start date
-    #preprocessed_df['Year'] = utils.get_year(
-    #    preprocessed_df['Date'], config['start_of_year']
-    #)
+    preprocessed_df['Fiscal Year'] = utils.get_year(
+        preprocessed_df['Date'], config['start_of_year']
+    )
     
+    preprocessed_df['Calendar Year'] = preprocessed_df['Date'].dt.year
+    preprocessed_df['Month'] = preprocessed_df['Date'].dt.month
+
     # Tweaks to the press data
     #if 'Title (optional)' in preprocessed_df.columns:
     #    preprocessed_df.drop('Title (optional)', axis='columns', inplace=True)
-    for column in ['Year']:
-        preprocessed_df[column] = preprocessed_df[column].astype('Int64')    
+    #for column in ['Year']:
+    #    preprocessed_df[column] = preprocessed_df[column].astype('Int64')    
 
     # Now explode the data
     for group_by_i in config['groupings']:

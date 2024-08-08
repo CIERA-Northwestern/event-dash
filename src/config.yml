@@ -26,7 +26,7 @@ color_palette: deep
 # Filetree options
 input_dirname: raw_data
 output_dirname: processed_data
-website_data_file_pattern: events-live.csv
+website_data_file_pattern: events-live*.csv
 press_office_data_file_pattern: press_office*.xls*
 combined_filename: press.csv
 
@@ -42,13 +42,15 @@ groupings:
 primary_id_column: index
 id_columns: # Unique identifiers
   - Title
-  - id
 numerical_columns: # Numeric columns that can be summed
   - Attendance
 date_columns: # Dates
   - Date
 x_columns: # Data will be binned by these along the x-axis
-  - Year # For example, a value of 2019 would be grouped into the 2019-2020 financial year
+  - Fiscal Year # For example, a value of 2019 would be grouped into the 2019-2020 financial year
+  - Calendar Year
+  - Year Spotlight
+  - Month across all Years
 categorical_columns: # Categorical columns that can be grouped, e.g. all Press Types=="Science" articles
   - Research Topic
   - Calendar Group
