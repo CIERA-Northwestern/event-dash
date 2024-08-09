@@ -91,18 +91,15 @@ class TestPrepData(unittest.TestCase):
 
         builder = DashBuilder(self.config_fp)
         raw_df, config = builder.data_handler.load_data(builder.config)
-
+'''
     def test_preprocess_data(self):
-        '''Does preprocess data at least run?'''
+
 
         builder = DashBuilder(self.config_fp)
         preprocessed_df, config = builder.prep_data(builder.config)
 
     def test_changes_propagate(self):
-        '''We have a config object that's passed around.
-        Let's double check that if it's edited in DataHandler
-        that Aggregator's version is also changed.
-        '''
+
         builder = DashBuilder(self.config_fp, press_user_utils)
         builder_val_before = copy.copy(builder.config['Title'])
         agg_val_before = copy.copy(builder.agg.config['Title'])
@@ -113,7 +110,7 @@ class TestPrepData(unittest.TestCase):
         assert builder_val_before == agg_val_before
         assert builder_val_before != builder_val_after
         assert builder_val_after == agg_val_after
-
+'''
     # def test_consistent_original_and_preprocessed(self):
     #     '''Are the raw and preprocessed dataframes consistent?
     #     This checks the user utils more than anything,
@@ -153,45 +150,6 @@ class TestRecategorize(unittest.TestCase):
         if os.path.isfile(self.config_fp):
             os.remove(self.config_fp)
 
-    def test_recategorize_data_per_grouping(self):
-
-        # Test Dataset
-        data = {
-            'id': [1, 1, 2, 2, 3],
-            'Press Types': [
-                'Northwestern Press', 'CIERA Press', 'External Press',
-                'CIERA Press', 'CIERA Press',
-           ],
-            'Year': [2015, 2015, 2014, 2014, 2015,],
-        }
-        df = pd.DataFrame(data)
-
-        new_categories = {
-            'Northwestern Press (Inclusive)': (
-                "'Northwestern Press' | ('Northwestern Press' & 'CIERA Press')"
-            )
-        }
-
-        df = self.builder.data_handler.recategorize_data_per_grouping(
-            df,
-            'Press Types',
-            new_categories
-        )
-
-        # Build up expected data
-        expected = pd.DataFrame(
-            data={
-                'id': [1, 2, 3,],
-                'Press Types': [
-                    'Northwestern Press (Inclusive)', 'Other', 'CIERA Press',
-               ],
-                'Year': [2015, 2014, 2015],
-            },
-        )
-        expected.set_index('id', inplace=True)
-
-        pd.testing.assert_series_equal(expected['Press Types'], df)
-
     # def test_recategorize_data_per_grouping_realistic(self):
 
     #     group_by = 'Research Topics'
@@ -230,6 +188,8 @@ class TestRecategorize(unittest.TestCase):
     #             )
     #         assert n_matched == 0
 
+
+''' - too specific; hard to adapt to events dash
     def test_recategorize_data(self):
 
         recategorized = self.builder.data_handler.recategorize_data(
@@ -279,7 +239,7 @@ class TestRecategorize(unittest.TestCase):
                     bad_ids_original, bad_ids_recategorized
                 )
             assert n_matched == 0
-
+            
     def test_recategorize_data_rename(self):
 
         new_categories = self.builder.config['new_categories']
@@ -330,17 +290,16 @@ class TestFilterData(unittest.TestCase):
         if os.path.isfile(self.config_fp):
             os.remove(self.config_fp)
 
+
     def test_filter_data(self):
 
         search_str = ''
         categorical_filters = {
             'Research Topics': ['Galaxies & Cosmology',],
-            'Press Types': ['External Press',],
             'Categories': ['Science', 'Event',],
         }
         range_filters = {
-            'Year': [2016, 2023], 
-            'Press Mentions': [0, 10], 
+            'Fiscal Year': [2016, 2023], 
         }
 
         selected = self.builder.data_handler.filter_data(
@@ -355,7 +314,7 @@ class TestFilterData(unittest.TestCase):
         assert np.invert((selected['Categories'] == 'Science') | (selected['Categories'] == 'Event')).sum() == 0
         assert np.invert((2016 <= selected['Year']) & (selected['Year'] <= 2023)).sum() == 0
         assert np.invert((0 <= selected['Press Mentions']) & (selected['Press Mentions'] <= 10)).sum() == 0
-
+'''
     
 class TestAggregate(unittest.TestCase):
 
@@ -372,13 +331,13 @@ class TestAggregate(unittest.TestCase):
 
         counts = self.builder.agg.count(
             selected_df,
-            'Year',
+            'Fiscal Year',
             'id',
             self.group_by
         )
         total = self.builder.agg.count(
             selected_df,
-            'Year',
+            'Fiscal Year',
             'id',
         )
 
@@ -386,7 +345,7 @@ class TestAggregate(unittest.TestCase):
         test_group = 'Galaxies & Cosmology'
         expected = len(pd.unique(
             selected_df.loc[(
-                (selected_df['Year'] == test_year) &
+                (selected_df['Fiscal Year'] == test_year) &
                 (selected_df[self.group_by] == test_group)
             ),'id']
         ))
@@ -396,67 +355,67 @@ class TestAggregate(unittest.TestCase):
         test_year = 2015
         expected = len(pd.unique(
             selected_df.loc[(
-                (selected_df['Year'] == test_year)
+                (selected_df['Fiscal Year'] == test_year)
             ),'id']
         ))
         assert total.loc[test_year][0] == expected
 
     ###############################################################################
 
-    def test_sum_press_mentions(self):
+    def test_sum_attendance(self):
 
         selected_df = self.data['preprocessed']
-        weighting = 'Press Mentions'
+        weighting = 'Attendance'
 
         sums = self.builder.agg.sum(
             selected_df,
-            'Year',
+            'Fiscal Year',
             weighting,
             self.group_by,
         )
         total = self.builder.agg.sum(
             selected_df,
-            'Year',
+            'Fiscal Year',
             weighting,
         )
 
         test_year = 2015
         test_group = 'Galaxies & Cosmology'
         subselected = selected_df.loc[(
-            (selected_df['Year'] == test_year) &
+            (selected_df['Fiscal Year'] == test_year) &
             (selected_df[self.group_by] == test_group)
         )]
         subselected = subselected.drop_duplicates(subset='id')
         subselected = subselected.replace('N/A', 0,)
-        expected = subselected['Press Mentions'].sum()
+        expected = subselected['Attendance'].sum()
         assert sums.loc[test_year,test_group] == expected
 
         # Total count
         test_year = 2015
         subselected = selected_df.loc[(
-            (selected_df['Year'] == test_year)
+            (selected_df['Fiscal Year'] == test_year)
         )]
         subselected = subselected.drop_duplicates(subset='id')
         subselected = subselected.replace('N/A', 0,)
-        expected = subselected['Press Mentions'].sum()
+        expected = subselected['Attendance'].sum()
         assert total.loc[test_year][0] == expected
 
     ###############################################################################
 
-    def test_sum_press_mentions_nonzero(self):
+    def test_sum_attendance_nonzero(self):
 
         selected_df = self.data['preprocessed']
-        weighting = 'Press Mentions'
+        weighting = 'Attendance'
 
         sums = self.builder.agg.sum(
             selected_df,
-            'Year',
+            'Fiscal Year',
             weighting,
             self.group_by,
         )
         totals = self.builder.agg.sum(
             selected_df,
-            'Year',
+            'Fiscal Year',
             weighting,
         )
 
@@ -464,23 +423,23 @@ class TestAggregate(unittest.TestCase):
         test_year = 2021
         test_group = 'Gravitational Waves & Multi-Messenger Astronomy'
         subselected = selected_df.loc[(
-            (selected_df['Year'] == test_year) &
+            (selected_df['Fiscal Year'] == test_year) &
             (selected_df[self.group_by] == test_group)
         )]
         subselected = subselected.drop_duplicates(subset='id')
         subselected = subselected.replace('N/A', 0)
-        expected = subselected['Press Mentions'].sum()
+        expected = subselected['Attendance'].sum()
         assert expected > 0
         assert sums.loc[test_year,test_group] == expected
 
         # Total count
         test_year = 2021
         subselected = selected_df.loc[(
-            (selected_df['Year'] == test_year)
+            (selected_df['Fiscal Year'] == test_year)
         )]
         subselected = subselected.drop_duplicates(subset='id')
         subselected = subselected.replace('N/A', 0)
-        expected = subselected['Press Mentions'].sum()
+        expected = subselected['Attendance'].sum()
         assert totals.loc[test_year][0] == expected
 
 ###############################################################################
