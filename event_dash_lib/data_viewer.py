@@ -145,7 +145,7 @@ class DataViewer:
         if categories is None:
             categories = df.columns
         if category_colors is None:
-            color_palette = sns.color_palette()
+            color_palette = sns.color_palette(n_colors=len(categories))
             category_colors = { key: color_palette[i] for i, key in enumerate(categories) }
 
         sns.set(font=font, style=seaborn_style)
@@ -325,7 +325,7 @@ class DataViewer:
         if categories is None:
             categories = df.columns
         if category_colors is None:
-            color_palette = sns.color_palette()
+            color_palette = sns.color_palette(n_colors=len(categories))
             category_colors = { key: color_palette[i] for i, key in enumerate(categories) }
 
         # Get data

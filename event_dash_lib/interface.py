@@ -199,7 +199,7 @@ class Interface:
         key = 'recategorize'
         if key in ask_for:
             selected_settings[key] = st_loc.checkbox(
-                'use combined categories (avoids double counting; definitions can be edited in the config)',
+                'use combined categories (avoids double-counting entries)',
                 value=display_defaults.get(key, False),
                 key=tag + key
             )

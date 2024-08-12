@@ -104,8 +104,8 @@ class DataHandler:
 
         # Get the formatted data used for the categories
         dummies = pd.get_dummies(preprocessed_df[groupby_column])
-        dummies['id'] = preprocessed_df['id']
-        dummies_grouped = dummies.groupby('id')
+        dummies['Title'] = preprocessed_df['Title']
+        dummies_grouped = dummies.groupby('Title')
         bools = dummies_grouped.sum() >= 1
         n_cats = bools.sum(axis='columns')
         if bools.values.max() > 1:
@@ -155,6 +155,7 @@ class DataHandler:
                     ) + '))'
                 )
                 category_definition = category_definition.replace('only', '')
+
             is_new_cat = bools.apply(
                 lambda row: eval(category_definition), axis='columns'
             )
@@ -196,8 +197,8 @@ class DataHandler:
         
         # Get the condensed data frame
         # This is probably dropping stuff that shouldn't be dropped!!!!!!!
-        recategorized = preprocessed_df.drop_duplicates(subset='id', keep='first')
-        recategorized = recategorized.set_index('id')
+        recategorized = preprocessed_df.drop_duplicates(subset='Title', keep='first')
+        recategorized = recategorized.set_index('Title')
 
         for groupby_column, new_categories_per_grouping in new_categories.items():
 
@@ -211,12 +212,14 @@ class DataHandler:
             else:
                 raise KeyError('New categories cannot have multiple sets of brackets.')
 
+
             recategorized_groupby = self.recategorize_data_per_grouping(
                 preprocessed_df,
                 groupby_column,
                 copy.deepcopy(new_categories_per_grouping),
                 combine_single_categories
             )
+
             recategorized[new_column] = recategorized_groupby
 
         recategorized.reset_index(inplace=True)
