@@ -68,7 +68,6 @@ text_columns: # Text columns that can be searched
 # In addition to boolean logic, preceeding the definition with 'only' will restrict the category to only the tags that show up in the proceeding definition.
 # Any categories not defined here will be left as is if they are the sole tag, or added to an 'Other' category if they are one of multiple tags.
 new_categories:
-<<<<<<< HEAD
    # Research topics are defined as falling into one of three main categories: Exploding & Dead Stars, Astrophysical Populations, and Exoplanets & the Solar System.
   Event Type Tags:
     'Outreach and Education': "'Public Outreach' | 'Future Leaders' | 'Education'"
@@ -76,11 +75,6 @@ new_categories:
     'Research': "'Academic Seminars' | 'Conferences' | 'Collab/Group Meetings'"
   Research Topic:
     'Compact Objects': "only ('Life and Death of Stars' | 'Gravitational Waves & Multi-Messenger Astronomy' | 'Black Holes & Dead Stars')"
-=======
-  # Research topics are defined as falling into one of three main categories: Exploding & Dead Stars, Astrophysical Populations, and Exoplanets & the Solar System.
-  Research Topics:
-    'Compact Objects': "only ('Life & Death of Stars' | 'Gravitational Waves & Multi-Messenger Astronomy' | 'Black Holes & Dead Stars')"
->>>>>>> 61402cff9aeae162276b880da956dea73b9bcf76
     'Cosmological Populations': "only ('Galaxies & Cosmology' | 'Stellar Dynamics & Stellar Populations')"
   # Article categories are grouped into research, outreach, and achievements & events, with research and outreach categorization superseeding achievements & events.
   Category:
