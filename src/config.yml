@@ -74,8 +74,8 @@ new_categories:
     'Internal': "'Development/Strategic' | 'Community Events'"
     'Research': "'Academic Seminars' | 'Conferences' | 'Collab/Group Meetings'"
     # Research topics are defined as falling into one of three main categories: Exploding & Dead Stars, Astrophysical Populations, and Exoplanets & the Solar System.
-  Research Topics:
-    'Compact Objects': "only ('Life & Death of Stars' | 'Gravitational Waves & Multi-Messenger Astronomy' | 'Black Holes & Dead Stars')"
+  Research Topic:
+    'Compact Objects': "only ('Life and Death of Stars' | 'Gravitational Waves & Multi-Messenger Astronomy' | 'Black Holes & Dead Stars')"
     'Cosmological Populations': "only ('Galaxies & Cosmology' | 'Stellar Dynamics & Stellar Populations')"
   # Article categories are grouped into research, outreach, and achievements & events, with research and outreach categorization superseeding achievements & events.
   Category:
