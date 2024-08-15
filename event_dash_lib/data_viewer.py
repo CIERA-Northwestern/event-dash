@@ -6,7 +6,7 @@ import types
 
 from typing import Tuple
 
-
+import calendar
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -153,6 +153,9 @@ class DataViewer:
 
         fig = plt.figure(figsize=(fig_width, fig_height))
         ax = plt.gca()
+
+        if df.index.name == 'Month':
+            plt.xticks(xs,[calendar.month_abbr[i] for i in xs])
         for j, category_j in enumerate(categories):
 
             ys = df[category_j]
