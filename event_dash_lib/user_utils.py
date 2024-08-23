@@ -165,7 +165,6 @@ def preprocess_data(cleaned_df, config):
     )
     
     preprocessed_df['Calendar Year'] = preprocessed_df['Date'].dt.year
-    preprocessed_df['Month'] = preprocessed_df['Date'].dt.month
 
     # Tweaks to the press data
     #if 'Title (optional)' in preprocessed_df.columns:

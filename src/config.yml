@@ -48,10 +48,8 @@ numerical_columns: # Numeric columns that can be summed
 date_columns: # Dates
   - Date
 x_columns: # Data will be binned by these along the x-axis
-  - Fiscal Year # For example, a value of 2019 would be grouped into the 2019-2020 financial year
-  - Calendar Year
-  - Year Spotlight
-  - Month across all Years
+  - Year(Flexible) # For example, a value of 2019 would be grouped into the 2019-2020 financial year
+  - Adm
 categorical_columns: # Categorical columns that can be grouped, e.g. all Press Types=="Science" articles
   - Research Topic
   - Calendar Group

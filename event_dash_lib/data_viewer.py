@@ -64,6 +64,8 @@ class DataViewer:
     def lineplot(
         self,
         df: pd.DataFrame,
+        month_reindex: list[int] = None,
+        year_reindex: list[int] = None,
         totals: pd.Series = None,
         categories: list[str] = None,
         cumulative: bool = False,
@@ -154,8 +156,17 @@ class DataViewer:
         fig = plt.figure(figsize=(fig_width, fig_height))
         ax = plt.gca()
 
-        if df.index.name == 'Month':
-            plt.xticks(xs,[calendar.month_abbr[i] for i in xs])
+        is_empty = True
+        for cols in df.columns:
+            if sum(list(df[cols])) != 0:
+                is_empty = False
+                break
+
+        if not is_empty:
+            if df.index.name == 'Reindexed Month':
+                plt.xticks(xs, [calendar.month_abbr[month_reindex[i-1]] for i in xs])
+            elif df.index.name == 'Reindexed Year':
+                plt.xticks(xs, year_reindex)
         for j, category_j in enumerate(categories):
 
             ys = df[category_j]

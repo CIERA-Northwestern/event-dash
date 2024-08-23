@@ -8,6 +8,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import streamlit as st
+import calendar
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -91,23 +92,29 @@ class Interface:
                 index = display_defaults.get(key + '_ind', 0),
             )
             
-            if value == 'Year Spotlight':
-                value2, ind2 = selectbox(
-                    st_loc,
-                    'what year do you want to spotlight?',
-                    options = list(range(min_year, (max_year+1), 1))
-                )
-                value = value + ':' + str(value2)
-            if value == 'Month across all Years':
-                value2, ind2 = selectbox(
-                    st_loc,
-                    'what month do you want to spotlight?',
-                    options= ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December']
-                )
-                value = value + ':' + value2
+            if value == 'Year(Flexible)':
+                month_dict = {'January(Calendar Year)':1, 'February':2, 'March':3,'April(Reporting Year)':4,'May':5,'June':6,'July':7,'August':8,'September(Fiscal Year)':9,'October':10,'November':11,'December':12}
+                col1, col2 = st_loc.columns(2)
+                with col1:
+                    value_month, ind_month = selectbox(
+                        st_loc, 
+                        'starting month for twelve-month recording period',
+                        options = list(month_dict.keys())
+                    )
+                    value = value + ':' + str(month_dict[value_month])
+                with col2:
+                    if month_dict[value_month] >= 9:
+                        min_year = min_year - 1
+                    start_year, end_year = st_loc.select_slider(
+                            'years to view',
+                            options=list(range(min_year,max_year+1)),
+                            value=(min_year, max_year),
+                    )
+                    value = value + ':' + str(start_year) + ':' + str(end_year)
             
             selected_settings[key] = value
             selected_settings[key + '_ind'] = ind
+
         key = 'y_column'
         if key in ask_for:
             if selected_settings['aggregation_method'] == 'count':
@@ -346,6 +353,8 @@ class Interface:
             'color_palette',
             'category_colors',
             'totals',
+            'month_reindex',
+            'year_reindex',
             'kwargs'
        ]
         if ask_for == 'all':
