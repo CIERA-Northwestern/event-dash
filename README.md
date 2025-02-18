@@ -1,9 +1,6 @@
 # CIERA Event Dashboard
 Adapted from CIERA event/root dashboard by zhafen
 
-
-[![Installation and Tests](https://github.com/CIERA-Northwestern/event-dash/actions/workflows/installation_and_tests.yml/badge.svg)](https://github.com/CIERA-Northwestern/event-dash/actions/workflows/installation_and_tests.yml)
-
 This dashboard provides a way for interested individuals to explore data regarding event and news related to CIERA.
 
 Instructions are provided below for various levels of usage.
