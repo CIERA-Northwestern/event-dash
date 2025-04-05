@@ -4,9 +4,9 @@
 
 
 # Location of the data relative to the config
-data_dir: ../data
+data_dir: ./data
 # Location of the figures relative to the config
-figure_dir: ../data/figures
+#figure_dir: ./data/figures
 
 # What day of the year to start on.
 # Default is September 1st, start of the Northwestern Financial Year
@@ -25,10 +25,7 @@ color_palette: deep
 
 # Filetree options
 input_dirname: raw_data
-output_dirname: processed_data
 website_data_file_pattern: events-live*.csv
-press_office_data_file_pattern: press_office*.xls*
-combined_filename: press.csv
 
 # What to group by
 # If you add additional categorical columns to the data, you can specify them here and they will be added to the dashboard.

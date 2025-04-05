@@ -6,7 +6,6 @@ import types
 
 from typing import Tuple
 
-import calendar
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -18,6 +17,8 @@ import matplotlib.figure
 import matplotlib.patheffects as patheffects
 import seaborn as sns
 
+import plotly.graph_objects as go
+import plotly.express as px
 from .data_handler import DataHandler
 from .settings import Settings
 
@@ -161,16 +162,17 @@ class DataViewer:
             if sum(list(df[cols])) != 0:
                 is_empty = False
                 break
+        reverse_month_dict = {1:'January', 2:'February', 3:'March', 4:'April', 5:'May',6:'June', 7:'July', 8:'August', 9:'September', 10:'October', 11:'November', 12:'December'}
 
         if not is_empty:
             if df.index.name == 'Reindexed Month':
-                plt.xticks(xs, [calendar.month_abbr[month_reindex[i-1]] for i in xs])
+                plt.xticks(xs, [reverse_month_dict[month_reindex[i-1]] for i in xs])
             elif df.index.name == 'Reindexed Year':
                 plt.xticks(xs, year_reindex)
         for j, category_j in enumerate(categories):
 
             ys = df[category_j]
-
+            
             ax.plot(
                 xs,
                 ys,
@@ -182,7 +184,7 @@ class DataViewer:
             ax.scatter(
                 xs,
                 ys,
-                label = category_j,
+                label = "{}".format(category_j),
                 zorder = 2,
                 color = category_colors[category_j],
                 s = marker_size,
@@ -193,7 +195,7 @@ class DataViewer:
                 label_y = ys.iloc[-1]
 
                 text = ax.annotate(
-                    text = category_j,
+                    text = "{}".format(category_j),
                     xy = (1, label_y),
                     xycoords = matplotlib.transforms.blended_transform_factory(ax.transAxes, ax.transData),
                     xytext = (-5 + 10 * (annotations_ha == 'left'), 0),
@@ -237,15 +239,19 @@ class DataViewer:
             ax.set_ylim(y_lim)
 
         # Ticks
+        '''
         if xtick_spacing is None:
-            ax.set_xticks(xs.astype(int))
+            if df.index.name == "Reindexed Month":
+                ax.set_xticks(xs.astype(str))
+            else:
+                ax.set_xticks(xs.astype(int))
         else:
             count_ticks = np.arange(x_lim[0], x_lim[1], xtick_spacing)
             ax.set_xticks(count_ticks)
         if ytick_spacing is not None:
             count_ticks = np.arange(y_lim[0], y_lim[1], ytick_spacing)
             ax.set_yticks(count_ticks)
-
+        '''
         if include_legend:
             l = ax.legend(
                 bbox_to_anchor = (legend_x, legend_y),
@@ -266,6 +272,72 @@ class DataViewer:
         st.write(fig)
 
         return fig
+    
+    def barplot(
+        self,
+        df: pd.DataFrame,
+        x_label: str = None,
+        y_label: str = None,
+        categories: list[str] = None,
+        
+    ):
+        '''
+        palette = sns.color_palette(palette='tab10', n_colors=len(df))
+        color_set = []
+        print(len(df))
+        for i in palette:
+            color_tuple = (int(i[0]*255), int(i[1]*255), int(i[2]*255))
+            color_set.append("#%02x%02x%02x" % color_tuple)
+        print(color_set)
+        print(len(color_set))
+        '''
+        #print(df.index) 
+        st.bar_chart(df, y='Aggregate', x_label=x_label, y_label=y_label, color="Aggregate")
+
+    
+    def testplot(
+        self,
+        df: pd.DataFrame,
+        month_reindex: list[int] = None,
+        year_reindex: list[int] = None,
+        totals: pd.Series = None,
+        x_label: str = None,
+        y_label: str = None,
+        category: str = None,
+        view_mode: str=None
+        ):
+        fig = go.Figure()
+        xs = df.index
+        #print(xs)
+
+        #print(totals)
+        if totals is not None:
+            #print(xs)
+            #print(len(xs))
+            df['totals'] = totals.to_list()
+        categories = df.columns
+        
+        for category_j in list(categories):
+            ys = df[category_j]
+            #print(ys)
+            fig.add_trace(go.Scatter(x=xs, y=ys, mode=view_mode, name=category_j))
+        
+        fig.update_layout(
+            title=f'{category} by {x_label}',
+            xaxis_title=x_label,
+            yaxis_title= y_label,
+            hovermode='closest',
+            plot_bgcolor='white',
+            xaxis=dict(gridcolor='lightgray'),
+            yaxis=dict(gridcolor='lightgray')
+        )
+
+        st.write(fig)
+
+        return fig.to_html(full_html=False)
+
+
+
 
     def stackplot(
         self,

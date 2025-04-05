@@ -104,7 +104,7 @@ def clean_data(raw_df, config):
     raw_df['Date'] = pd.to_datetime(raw_df['Date'], errors='coerce')
 
     # Drop rows where 'Date' year is 1970
-    cleaned_df = raw_df[raw_df['Date'].dt.year != 1900]
+    cleaned_df = raw_df[raw_df['Date'].dt.year != 1970]
     
     # # Drop drafts
     # cleaned_df = raw_df.drop(
@@ -129,10 +129,17 @@ def clean_data(raw_df, config):
         cleaned_df[str_column] = cleaned_df[str_column].str.replace('&amp;', '&')
 
     # Handle NaNs and such
-    columns_to_fill = ['Attendance', 'Duration']
-    cleaned_df[columns_to_fill] = cleaned_df[columns_to_fill].fillna(
-        value=0
-    )
+
+    AVERAGE_NUM_ATTENDEES = 10
+    def resolve_numerical(entry):
+        try:
+            entry = int(entry)
+        except:
+            entry = AVERAGE_NUM_ATTENDEES
+        
+        return entry
+        
+    cleaned_df['Attendance'] = cleaned_df['Attendance'].apply(resolve_numerical)
     cleaned_df.fillna(value='N/A', inplace=True)
 
     return cleaned_df, config
@@ -158,7 +165,7 @@ def preprocess_data(cleaned_df, config):
     '''
 
     preprocessed_df = cleaned_df.copy()
-
+    '''
     # Get the year, according to the config start date
     preprocessed_df['Fiscal Year'] = utils.get_year(
         preprocessed_df['Date'], config['start_of_year']
@@ -179,13 +186,20 @@ def preprocess_data(cleaned_df, config):
 
     # Exploding the data results in duplicate IDs,
     # so let's set up some new, unique IDs.
-    #preprocessed_df['id'] = preprocessed_df.index
-    #preprocessed_df.set_index(np.arange(len(preprocessed_df)), inplace=True)
+    '''
+    
+    preprocessed_df['id'] = preprocessed_df.index
+    preprocessed_df.set_index(np.arange(len(preprocessed_df)), inplace=True)
+
+    def legacy(date):
+        if date.year < 2014:
+            return "LEGACY"
+        else:
+            return "CURRENT"
+    
+    preprocessed_df['Legacy'] = preprocessed_df['Date'].apply(legacy)
 
 
-    ## SHOULD remove any spaces before or after categories; allowing a bit more flexibility in data entry
-    for group_by_i in config['groupings']:
-        preprocessed_df[group_by_i] = preprocessed_df[group_by_i].str.strip()
 
     # This flag exists just to demonstrate you can modify the config
     # during the user functions
