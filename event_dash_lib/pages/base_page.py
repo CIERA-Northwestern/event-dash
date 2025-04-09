@@ -54,7 +54,7 @@ def main(config_fp: str, user_utils: types.ModuleType = None):
     # because it doesnt really match our goals for this dataset
     # all the infrastructure is still there though
     # if you would like to re-add, uncomment relevant sections in
-    # base_page, interface, and data_handler
+    # base_page, interface, dash_builder and data_handler
     '''
     selected_settings = builder.settings.common['data']
     data['recategorized'] = builder.recategorize_data(
@@ -80,8 +80,6 @@ def main(config_fp: str, user_utils: types.ModuleType = None):
 
     axes_object = builder.interface.request_data_axes(st, max_year, min_year)
     #print(axes_object)
-    # catches specified groupby category
-    category_specific = builder.settings.get_settings(common_to_include=['data'])
 
     # filters data as per specs
     # filters data as per specs
@@ -116,8 +114,6 @@ def main(config_fp: str, user_utils: types.ModuleType = None):
     years_to_display = list(range(year_start+1, year_end+1))
 
     month_redef = [x if x<=12 else x-12 for x in range(month_start, 12+month_start)]
-    defdate = datetime.date(min_year, 1, 1)
-
 
     data['selected']['Reindexed Year'] = utils.get_year(
             data['selected']['Date'], "{} 1".format(reverse_month_dict[month_start]),
@@ -287,33 +283,36 @@ def main(config_fp: str, user_utils: types.ModuleType = None):
         '''
     #constructs line plot based on specifications provided
         if data_option == "No Total":
-            builder.data_viewer.lineplot(
+            builder.data_viewer.testplot(
                 df = data['aggregated'],
                 month_reindex = month_redef if builder.settings.common['data']['x_column_ind'] == 0 else None, 
                 year_reindex = years_to_display,
                 y_label=builder.settings.common['data']['y_column'],
                 x_label=builder.settings.common['data']['x_column'],
-                category=builder.settings.common['data']['groupby_column']
+                category=builder.settings.common['data']['groupby_column'],
+                view_mode=builder.settings.common['view']['view_mode']
             )
         elif data_option == "Only Total":
-            builder.data_viewer.lineplot(
+            builder.data_viewer.testplot(
                 df = data['totals'].to_frame(name="totals"),
                 month_reindex = month_redef if builder.settings.common['data']['x_column_ind'] == 0 else None, 
                 year_reindex=years_to_display,
                 y_label=builder.settings.common['data']['y_column'],
                 x_label=builder.settings.common['data']['x_column'],
-                category=builder.settings.common['data']['groupby_column']
+                category=builder.settings.common['data']['groupby_column'],
+                view_mode=builder.settings.common['view']['view_mode']
                 #**builder.settings.get_settings(local_key)
             )
         elif data_option == "Standard":
-            builder.data_viewer.lineplot(
+            builder.data_viewer.testplot(
                 df = data['aggregated'],
                 month_reindex = month_redef if builder.settings.common['data']['x_column_ind'] == 0 else None, 
                 year_reindex = years_to_display,
                 totals = data['totals'],
                 y_label=builder.settings.common['data']['y_column'],
                 x_label=builder.settings.common['data']['x_column'],
-                category=builder.settings.common['data']['groupby_column']
+                category=builder.settings.common['data']['groupby_column'],
+                view_mode=builder.settings.common['view']['view_mode']
             )
     # Bar Plot IF data option is aggregated
     elif data_option == "Year Aggregate":
@@ -322,7 +321,7 @@ def main(config_fp: str, user_utils: types.ModuleType = None):
         builder.data_viewer.barplot(
             data['total by instance'],
         )
-    
+    '''
     elif data_option == "testing":
         st.subheader("testing chart; please disregard")
         builder.data_viewer.testplot(
@@ -335,6 +334,7 @@ def main(config_fp: str, user_utils: types.ModuleType = None):
             category=builder.settings.common['data']['groupby_column'],
             view_mode=builder.settings.common['view']['view_mode']
         )
+    '''
     
     # View the data directly
     builder.data_viewer.write(data)

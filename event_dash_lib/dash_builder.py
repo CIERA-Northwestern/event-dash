@@ -110,6 +110,7 @@ class DashBuilder:
             recategorize: bool = True,
             combine_single_categories: bool = False,
         ) -> pd.DataFrame:
+        '
         Recategorize the data, i.e. combine existing categories into new ones.
         The end result is one category per article, so no articles are double-counted.
         However, if the new categories are ill-defined they can contradict one another
@@ -129,7 +130,7 @@ class DashBuilder:
         Returns:
             recategorized: The dataframe containing the recategorized data.
                 One entry per article.
-        
+        '
         msg = 'Recategorizing data...'
         print(msg)
         with st.spinner(msg):
